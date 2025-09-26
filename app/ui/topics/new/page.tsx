@@ -46,21 +46,13 @@ export default function NewTopicPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <nav className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <a href="/ui" className="text-blue-600 hover:text-blue-700">
-                ← Back to Dashboard
-              </a>
-              <h1 className="text-2xl font-bold text-gray-900">Create New Topic</h1>
-            </div>
-          </nav>
-        </div>
-      </header>
-
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-6">
+        <a href="/ui" className="text-blue-600 hover:text-blue-700 mb-4 inline-block">
+          ← Back to Dashboard
+        </a>
+        <h1 className="text-3xl font-bold text-gray-900">Create New Topic</h1>
+      </div>
         <div className="bg-white rounded-lg shadow-sm p-8">
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -199,7 +191,6 @@ export default function NewTopicPage() {
             </div>
           </div>
         )}
-      </main>
     </div>
   );
 }

@@ -21,29 +21,17 @@ export default function TopicPage({ params }: TopicPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <nav className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <a href="/ui" className="text-blue-600 hover:text-blue-700">
-                ← Back to Dashboard
-              </a>
-              <h1 className="text-2xl font-bold text-gray-900">{topic.name}</h1>
-            </div>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors">
-              Ask Question
-            </button>
-          </nav>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-6">
+        <div className="flex items-center space-x-4 mb-4">
+          <a href="/ui" className="text-blue-600 hover:text-blue-700">
+            ← Back to Dashboard
+          </a>
         </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <p className="text-lg text-gray-600">{topic.description}</p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">{topic.name}</h1>
+        <p className="text-lg text-gray-600">{topic.description}</p>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-3">
             <div className="bg-white rounded-lg shadow-sm">
@@ -214,7 +202,6 @@ export default function TopicPage({ params }: TopicPageProps) {
             </div>
           </div>
         </div>
-      </main>
     </div>
   );
 }
