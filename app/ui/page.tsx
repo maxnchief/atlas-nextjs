@@ -1,4 +1,8 @@
-export default function UIHomePage() {
+import { fetchTopics } from "../../lib/data";
+
+export default async function UIHomePage() {
+  const topics = await fetchTopics();
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
@@ -41,37 +45,19 @@ export default function UIHomePage() {
 
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Popular Topics
+                All Topics
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <a
-                  href="/ui/topics/1"
-                  className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
-                >
-                  <h4 className="font-medium text-gray-900 mb-2">Technology</h4>
-                  <p className="text-sm text-gray-600">142 questions</p>
-                </a>
-                <a
-                  href="/ui/topics/2"
-                  className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
-                >
-                  <h4 className="font-medium text-gray-900 mb-2">Science</h4>
-                  <p className="text-sm text-gray-600">89 questions</p>
-                </a>
-                <a
-                  href="/ui/topics/3"
-                  className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
-                >
-                  <h4 className="font-medium text-gray-900 mb-2">Arts</h4>
-                  <p className="text-sm text-gray-600">56 questions</p>
-                </a>
-                <a
-                  href="/ui/topics/4"
-                  className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
-                >
-                  <h4 className="font-medium text-gray-900 mb-2">Philosophy</h4>
-                  <p className="text-sm text-gray-600">34 questions</p>
-                </a>
+                {topics.map((topic) => (
+                  <a
+                    key={topic.id}
+                    href={`/ui/topics/${topic.id}`}
+                    className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                  >
+                    <h4 className="font-medium text-gray-900 mb-2">{topic.title}</h4>
+                    <p className="text-sm text-gray-600">Click to view questions</p>
+                  </a>
+                ))}
               </div>
             </div>
           </div>

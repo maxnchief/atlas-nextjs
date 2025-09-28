@@ -25,20 +25,36 @@ export default function NewTopicPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Mock submission - in a real app, you'd submit to your API
+    // Submit to database
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      console.log("Topic created:", formData);
-      
-      // Reset form
-      setFormData({
-        name: "",
-        description: "",
-        category: "general",
+      const response = await fetch('/api/topics', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: formData.name,
+        }),
       });
-      
-      alert("Topic created successfully!");
+
+      if (response.ok) {
+        const newTopic = await response.json();
+        
+        // Reset form
+        setFormData({
+          name: "",
+          description: "",
+          category: "general",
+        });
+        
+        alert("Topic created successfully!");
+        // Redirect to the new topic page
+        window.location.href = `/ui/topics/${newTopic.id}`;
+      } else {
+        throw new Error('Failed to create topic');
+      }
     } catch (error) {
+      console.error("Error creating topic:", error);
       alert("Error creating topic. Please try again.");
     } finally {
       setIsSubmitting(false);
