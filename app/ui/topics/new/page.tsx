@@ -48,7 +48,7 @@ export default function NewTopicPage() {
         });
         
         alert("Topic created successfully!");
-        // Redirect to the new topic page
+        // Redirect to the new topic page (this will refresh the layout and sidebar)
         window.location.href = `/ui/topics/${newTopic.id}`;
       } else {
         throw new Error('Failed to create topic');

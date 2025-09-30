@@ -47,8 +47,8 @@ export async function insertQuestion(
 ) {
   try {
     const data =
-      await sql<Question>`INSERT INTO questions (title, topic_id, votes) VALUES (${question.title}, ${question.topic_id}, ${question.votes})`;
-    return data.rows;
+      await sql<Question>`INSERT INTO questions (title, topic_id, votes) VALUES (${question.title}, ${question.topic_id}, ${question.votes}) RETURNING *;`;
+    return data.rows[0];
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to add question.");
@@ -70,10 +70,21 @@ export async function insertTopic(topic: Pick<Topic, "title">) {
 export async function incrementVotes(id: string) {
   try {
     const data =
-      await sql<Question>`UPDATE questions SET votes = votes + 1 WHERE id = ${id}`;
-    return data.rows;
+      await sql<Question>`UPDATE questions SET votes = votes + 1 WHERE id = ${id} RETURNING *;`;
+    return data.rows[0];
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to increment votes.");
+  }
+}
+
+export async function decrementVotes(id: string) {
+  try {
+    const data =
+      await sql<Question>`UPDATE questions SET votes = votes - 1 WHERE id = ${id} RETURNING *;`;
+    return data.rows[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to decrement votes.");
   }
 }
