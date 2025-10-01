@@ -23,10 +23,10 @@ export default function HomePage() {
               Learn More
             </a>
             <a
-              href="/ui"
+              href="/login"
               className="inline-block bg-gray-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-700 transition-colors"
             >
-              Get Started
+              Log In
             </a>
           </div>
         </div>

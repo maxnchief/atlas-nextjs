@@ -1,6 +1,7 @@
 import "@/app/global.css";
 import { inter } from "@/app/fonts";
 import { Metadata } from "next";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "Full Stack Next.js | Atlas School",
@@ -14,7 +15,9 @@ export default function RootLayout({ children }: Props) {
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased text-secondary`}>
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

@@ -8,10 +8,10 @@ export default function AboutPage() {
               Atlas
             </a>
             <a
-              href="/ui"
+              href="/login"
               className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
             >
-              Dashboard
+              Log In
             </a>
           </nav>
         </div>
@@ -50,10 +50,10 @@ export default function AboutPage() {
             
             <div className="text-center">
               <a
-                href="/ui"
+                href="/login"
                 className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
               >
-                Start Exploring
+                Get Started
               </a>
             </div>
           </div>

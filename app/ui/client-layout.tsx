@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSession, signOut } from "next-auth/react";
 import { Topic } from "../../lib/definitions";
 
 interface ClientLayoutProps {
@@ -10,6 +11,7 @@ interface ClientLayoutProps {
 
 export default function ClientLayout({ children, topics }: ClientLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { data: session } = useSession();
 
   const topicColors = [
     "bg-blue-500",
@@ -170,16 +172,24 @@ export default function ClientLayout({ children, topics }: ClientLayoutProps) {
             {/* Sidebar footer */}
             <div className="border-t border-gray-200 p-4">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-medium">
+                    {session?.user?.name?.charAt(0) || "U"}
+                  </span>
+                </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 truncate">
-                    John Doe
+                    {session?.user?.name || "User"}
                   </p>
                   <p className="text-xs text-gray-500 truncate">
-                    john@example.com
+                    {session?.user?.email || ""}
                   </p>
                 </div>
-                <button className="text-gray-400 hover:text-gray-500">
+                <button 
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="text-gray-400 hover:text-gray-500"
+                  title="Sign out"
+                >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
