@@ -1,7 +1,17 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { createHash } from "crypto"
 import { fetchUser } from "./lib/data"
+
+// Simple hash function for Edge Runtime compatibility
+function simpleHash(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash).toString(16);
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,
@@ -36,7 +46,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
 
             // Simple hash comparison for Edge Runtime compatibility
-            const hashedPassword = createHash('sha256').update(credentials.password as string).digest('hex')
+            const hashedPassword = simpleHash(credentials.password as string)
             const isPasswordValid = hashedPassword === user.password
 
             if (!isPasswordValid) {

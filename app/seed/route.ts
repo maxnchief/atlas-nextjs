@@ -1,7 +1,17 @@
-import { createHash } from "crypto";
 import { db } from "@vercel/postgres";
 import { users, topics, questions } from "../../lib/placeholder-data";
 import { revalidatePath } from "next/cache";
+
+// Simple hash function for Edge Runtime compatibility
+function simpleHash(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash).toString(16);
+}
 
 const client = await db.connect();
 
@@ -21,7 +31,7 @@ async function seedUsers() {
 
   const insertedUsers = await Promise.all(
     users.map(async (user) => {
-      const hashedPassword = createHash('sha256').update(user.password).digest('hex');
+      const hashedPassword = simpleHash(user.password);
       return client.sql`
         INSERT INTO users (id, name, email, password)
         VALUES (${user.id}, ${user.name}, ${user.email}, ${hashedPassword})
