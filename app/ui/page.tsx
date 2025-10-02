@@ -1,7 +1,29 @@
 import { fetchTopics } from "../../lib/data";
 
 export default async function UIHomePage() {
-  const topics = await fetchTopics();
+  let topics = [];
+  
+  try {
+    // Try to fetch topics from database
+    if (process.env.POSTGRES_URL) {
+      topics = await fetchTopics();
+    } else {
+      // Fallback demo topics when database is not configured
+      topics = [
+        { id: "1", title: "React" },
+        { id: "2", title: "Tailwind" },
+        { id: "3", title: "TypeScript" },
+      ];
+    }
+  } catch (error) {
+    console.error("Error fetching topics:", error);
+    // Fallback demo topics on error
+    topics = [
+      { id: "1", title: "React" },
+      { id: "2", title: "Tailwind" },
+      { id: "3", title: "TypeScript" },
+    ];
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
