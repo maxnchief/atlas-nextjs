@@ -1,4 +1,4 @@
-import bcrypt from "bcryptjs";
+import { createHash } from "crypto";
 import { db } from "@vercel/postgres";
 import { users, topics, questions } from "../../lib/placeholder-data";
 import { revalidatePath } from "next/cache";
@@ -21,7 +21,7 @@ async function seedUsers() {
 
   const insertedUsers = await Promise.all(
     users.map(async (user) => {
-      const hashedPassword = await bcrypt.hash(user.password, 10);
+      const hashedPassword = createHash('sha256').update(user.password).digest('hex');
       return client.sql`
         INSERT INTO users (id, name, email, password)
         VALUES (${user.id}, ${user.name}, ${user.email}, ${hashedPassword})

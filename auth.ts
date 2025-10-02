@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import bcrypt from "bcryptjs"
+import { createHash } from "crypto"
 import { fetchUser } from "./lib/data"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -35,10 +35,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               return null
             }
 
-            const isPasswordValid = await bcrypt.compare(
-              credentials.password as string,
-              user.password
-            )
+            // Simple hash comparison for Edge Runtime compatibility
+            const hashedPassword = createHash('sha256').update(credentials.password as string).digest('hex')
+            const isPasswordValid = hashedPassword === user.password
 
             if (!isPasswordValid) {
               return null

@@ -3,13 +3,13 @@ import { fetchTopic, fetchQuestions } from "../../../../lib/data";
 import { notFound } from "next/navigation";
 
 interface TopicPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function TopicPage({ params }: TopicPageProps) {
-  const { id } = params;
+  const { id } = await params;
   
   let topic = null;
   let questions = [];
