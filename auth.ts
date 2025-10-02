@@ -69,7 +69,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               id: "410544b2-4001-4271-9855-fec4b6a6442b",
               email: "user@atlasmail.com",
               name: "Demo User",
-            }
+            } 
           }
           return null
         }
