@@ -13,9 +13,7 @@ function simpleHash(str: string): string {
   return Math.abs(hash).toString(16);
 }
 
-const client = await db.connect();
-
-async function seedUsers() {
+async function seedUsers(client: any) {
   await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
 
   await client.sql`
@@ -43,7 +41,7 @@ async function seedUsers() {
   return insertedUsers;
 }
 
-async function seedTopics() {
+async function seedTopics(client: any) {
   await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
 
   await client.sql`
@@ -68,16 +66,15 @@ async function seedTopics() {
   return insertedTopics;
 }
 
-async function seedQuestions() {
+async function seedQuestions(client: any) {
   await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
 
   await client.sql`
     CREATE TABLE IF NOT EXISTS questions (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-      title VARCHAR(255) NOT NULL,
+      question TEXT NOT NULL,
       topic_id UUID NOT NULL,
-      votes INT NOT NULL,
-      answer_id UUID
+      votes INT DEFAULT 0
     );
   `;
 
@@ -86,7 +83,7 @@ async function seedQuestions() {
   const insertedQuestions = await Promise.all(
     questions.map(
       (question) => client.sql`
-        INSERT INTO questions (id, title, topic_id, votes)
+        INSERT INTO questions (id, question, topic_id, votes)
         VALUES (${question.id}, ${question.title}, ${question.topic}, ${question.votes})
         ON CONFLICT (id) DO NOTHING;
       `
@@ -96,33 +93,31 @@ async function seedQuestions() {
   return insertedQuestions;
 }
 
-async function seedAnswers() {
+async function seedAnswers(client: any) {
   await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
 
   await client.sql`
     CREATE TABLE IF NOT EXISTS answers (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-      answer VARCHAR(255) NOT NULL,
-      question_id UUID NOT NULL
+      question_id UUID NOT NULL,
+      answer TEXT NOT NULL,
+      is_correct BOOLEAN DEFAULT FALSE,
+      FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
     );
   `;
 
   await client.sql`DELETE FROM answers`;
 
   const answers = [
-    {
-      id: "0b93d8dc-6e43-49e3-b59f-b67531247612",
-      answer:
-        "It's a new feature in TypeScript that makes it easier to write type-safe code.",
-      question_id: "0b93d8dc-6e43-49e3-b59f-b67531247612",
-    },
+    { id: "410544b2-4001-4271-9855-fec4b6a6442a", question_id: "410544b2-4001-4271-9855-fec4b6a6442c", answer: "Yes, variables declared with let can be reassigned.", is_correct: true },
+    { id: "410544b2-4001-4271-9855-fec4b6a6442b", question_id: "410544b2-4001-4271-9855-fec4b6a6442c", answer: "No, let variables are constants.", is_correct: false },
   ];
 
   const insertedAnswers = await Promise.all(
     answers.map(
       (answer) => client.sql`
-        INSERT INTO answers (id, answer, question_id)
-        VALUES (${answer.id}, ${answer.answer}, ${answer.question_id})
+        INSERT INTO answers (id, question_id, answer, is_correct)
+        VALUES (${answer.id}, ${answer.question_id}, ${answer.answer}, ${answer.is_correct})
         ON CONFLICT (id) DO NOTHING;
       `
     )
@@ -131,7 +126,8 @@ async function seedAnswers() {
   return insertedAnswers;
 }
 
-async function clearData() {
+async function clearDatabase(client: any) {
+  await client.sql`DROP TABLE IF EXISTS answers`;
   await client.sql`DROP TABLE IF EXISTS questions`;
   await client.sql`DROP TABLE IF EXISTS topics`;
   await client.sql`DROP TABLE IF EXISTS users`;
@@ -139,20 +135,30 @@ async function clearData() {
 
 export async function GET() {
   try {
+    // Check if database connection is available
+    if (!process.env.POSTGRES_URL) {
+      return Response.json({ 
+        message: "Database seeding skipped - no database connection string provided. App will use fallback data." 
+      });
+    }
+
+    const client = await db.connect();
+    
     await client.sql`BEGIN`;
-    await clearData();
-    await seedUsers();
-    await seedTopics();
-    await seedQuestions();
-    await seedAnswers();
+    await clearDatabase(client);
+    await seedUsers(client);
+    await seedTopics(client);
+    await seedQuestions(client);
+    await seedAnswers(client);
     await client.sql`COMMIT`;
 
-    revalidatePath("/", "layout");
-
+    revalidatePath("/");
     return Response.json({ message: "Database seeded successfully" });
   } catch (error) {
-    await client.sql`ROLLBACK`;
-    console.log(error);
-    return Response.json({ error }, { status: 500 });
+    console.error("Seeding error:", error);
+    return Response.json({ 
+      message: "Database seeding failed - app will use fallback data",
+      error: error instanceof Error ? error.message : "Unknown error"
+    }, { status: 500 });
   }
 }
