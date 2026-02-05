@@ -30,8 +30,8 @@ const mockAnswers = [
   }
 ];
 
-export default function QuestionPage({ params }: { params: { id: string } }) {
-  const questionId = params.id;
+export default function QuestionPage(props: any) {
+  const questionId = props?.params?.id as string;
   
   // Sort answers to show accepted answer first
   const sortedAnswers = [...mockAnswers].sort((a, b) => {
