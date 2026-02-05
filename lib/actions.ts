@@ -37,6 +37,8 @@ export async function addVote(data: FormData) {
   try {
     incrementVotes(data.get("id") as string);
     revalidatePath("/ui/topics/[id]", "page");
+    revalidatePath("/ui/questions/[id]", "page");
+    revalidatePath("/ui", "layout");
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to add vote.");

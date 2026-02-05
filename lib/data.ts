@@ -1,5 +1,5 @@
 import { sql } from "@vercel/postgres";
-import { Question, Topic, User } from "./definitions";
+import { Question, Topic, User, Answer } from "./definitions";
 
 export async function fetchUser(email: string): Promise<User | undefined> {
   try {
@@ -39,6 +39,26 @@ export async function fetchQuestions(id: string) {
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch questions.");
+  }
+}
+
+export async function fetchQuestion(id: string) {
+  try {
+    const data = await sql<Question>`SELECT * FROM questions WHERE id = ${id}`;
+    return data.rows && data.rows.length > 0 ? data.rows[0] : null;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch question.");
+  }
+}
+
+export async function fetchAnswers(questionId: string) {
+  try {
+    const data = await sql<Answer>`SELECT * FROM answers WHERE question_id = ${questionId}`;
+    return data.rows;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch answers.");
   }
 }
 
