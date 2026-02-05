@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { fetchUser } from "@/lib/data";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  secret: process.env.NEXTAUTH_SECRET,
   theme: {
     brandColor: "#1ED2AF",
     logo: "/logo.png",
