@@ -21,8 +21,9 @@ export default async function QuestionPage(props: any) {
 
   // Sort answers - accepted answers first
   const sortedAnswers = [...answers].sort((a, b) => {
-    // For now, we'll check if either has an accepted marker
-    // This assumes answers with answer_id set might be accepted
+    // Accepted answers come first
+    if (a.is_accepted && !b.is_accepted) return -1;
+    if (!a.is_accepted && b.is_accepted) return 1;
     return 0;
   });
 
@@ -50,7 +51,7 @@ export default async function QuestionPage(props: any) {
             key={answer.id}
             id={answer.id}
             text={answer.answer}
-            isAccepted={false}
+            isAccepted={answer.is_accepted || false}
             questionId={questionId}
           />
         ))}
