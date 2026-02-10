@@ -1,6 +1,5 @@
-"use client";
-
 import { CheckIcon } from "@heroicons/react/24/outline";
+import { markAnswer } from "@/lib/actions";
 
 type Props = {
   id: string;
@@ -34,7 +33,7 @@ export default function AnswerItem({ id, text, isAccepted, questionId }: Props) 
         </div>
         
         {!isAccepted && (
-          <form className="ml-4">
+          <form action={markAnswer} className="ml-4">
             <input type="hidden" name="answer_id" value={id} />
             <input type="hidden" name="question_id" value={questionId} />
             <button

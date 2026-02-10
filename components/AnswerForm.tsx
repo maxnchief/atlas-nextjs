@@ -1,4 +1,4 @@
-"use client";
+import { addAnswer } from "@/lib/actions";
 
 type Props = {
   questionId: string;
@@ -7,7 +7,7 @@ type Props = {
 export default function AnswerForm({ questionId }: Props) {
   return (
     <div className="mb-8">
-      <form className="space-y-4">
+      <form action={addAnswer} className="space-y-4">
         <div>
           <label htmlFor="answer" className="block text-sm font-medium text-gray-700 mb-2">
             Your Answer

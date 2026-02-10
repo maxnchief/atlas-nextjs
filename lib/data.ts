@@ -55,10 +55,38 @@ export async function fetchQuestion(id: string) {
 export async function fetchAnswers(questionId: string) {
   try {
     const data = await sql<Answer>`SELECT * FROM answers WHERE question_id = ${questionId}`;
+    // Also fetch the question to determine which answer is accepted
+    const question = await fetchQuestion(questionId);
+    if (question && question.answer_id) {
+      return data.rows.map((row) => ({
+        ...row,
+        is_accepted: row.id === question.answer_id,
+      }));
+    }
     return data.rows;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch answers.");
+  }
+}
+
+export async function insertAnswer(answer: Pick<Answer, "answer" | "question_id">) {
+  try {
+    const data = await sql<Answer>`INSERT INTO answers (answer, question_id) VALUES (${answer.answer}, ${answer.question_id}) RETURNING *;`;
+    return data.rows[0];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to insert answer.");
+  }
+}
+
+export async function setAcceptedAnswer(questionId: string, answerId: string) {
+  try {
+    const data = await sql<Question>`UPDATE questions SET answer_id = ${answerId} WHERE id = ${questionId}`;
+    return data.rows;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to set accepted answer.");
   }
 }
 
